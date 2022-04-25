@@ -13,16 +13,23 @@ export default function TestNavigator(props: TestsFilter2){
 
 	const {auth} = useAuth()
 	const [testsData, setTestsData] = useState([])
-	useEffect(()=>{
-		const tests = api.getTestsByTerm(auth)
-		tests.then(sortedTests => addOpenKey(sortedTests.data)).catch(e=> console.log(e.message))
-	},[])
+	useEffect(()=>testsByTerm(),[])
 
 	function addOpenKey(data: any){
 		for(let i = 0; i < data.length; i++){
 			data[i].open = false
 		}
 		setTestsData(data)
+	}
+
+	function testsByTeacher(){
+		const tests = api.getTestsByTeacher(auth)
+		tests.then(sortedTests => addOpenKey(sortedTests.data)).catch(e => console.log(e.message))
+	}
+
+	function testsByTerm(){
+		const tests = api.getTestsByTerm(auth)
+		tests.then(sortedTests => addOpenKey(sortedTests.data)).catch(e=> console.log(e.message))
 	}
 
 	return(
@@ -34,15 +41,15 @@ export default function TestNavigator(props: TestsFilter2){
 		}}>
 			<Button
 			variant={props.byTerm ? 'contained' : 'outlined'}
-			onClick={() => !props.byTerm && props.sorter(true)}
+			onClick={() => {if(!props.byTerm) {props.sorter(true); testsByTerm()}}}
 			>DISCIPLINAS</Button>
 			<Button variant={!props.byTerm ? 'contained' : 'outlined'}
-			onClick={() => props.byTerm && props.sorter(false)}
+			onClick={() => {if(props.byTerm) {props.sorter(false); testsByTeacher()}}}
 			>PESSOA INSTRUTORA</Button>
 			<Button variant='outlined'>ADICIONAR</Button>
 		</Container>
 		<Container>
-				<TestLister testsData={testsData} setTestsData={setTestsData}/>
+			<TestLister testsData={testsData} setTestsData={setTestsData} byTerm={props.byTerm}/>
 		</Container>
 		</>
 	)

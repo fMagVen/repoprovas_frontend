@@ -23,7 +23,6 @@ export async function user(user: userData) {
 
 export async function getTestsByTerm(token: string){
 	const config = createConfig(token)
-	console.log(config)
 	const data = axios.get(`${URL}/tests/term`, config)
 	return data
 }
